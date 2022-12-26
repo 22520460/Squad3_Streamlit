@@ -16,7 +16,7 @@ if upload_file is not None:
     df = pd.read_csv(upload_file)  
 
     #Xử lý số liệu
-    df.dropna(inplace=True) # Xóa các dòng Nan
+    df.dropna(inplace = True) # Xóa các dòng Nan
     le = LabelEncoder() # Sửa chữ thành số
     is_Category = df.dtypes == object # Gán các cột có giá trị object thì trả về True
     category_column_list = df.columns[is_Category].tolist() # List các cột có giá trị là object
@@ -26,11 +26,11 @@ if upload_file is not None:
     
     # Chọn các cột để train
     st.markdown("**_:blue[Choose Input Feature]_**")
-    st.write("What columns do you want to use for training " ,str(df.columns[-1]))
-    choice = arr.array('i',[])
+    st.write("What columns do you want to use for training ", str(df.columns[-1]))
+    choice = arr.array('i', [])
     for i in range(0, len(df.columns) - 1):
         choice.append(1)
-        choice[i]= st.checkbox(df.columns[i])
+        choice[i] = st.checkbox(df.columns[i])
     df1 = df.copy()  # Tạo dataframe khác 
     count = 0 # Đếm số cột chọn cho train
     for i in range(0, len(df.columns) - 1):
@@ -78,8 +78,8 @@ if upload_file is not None:
         y_pred = [(value + 1) for value in y_pred]
         
         
-        MAE_1 = np.mean(abs(np.log(y_test)-np.log(y_pred)))
-        MAE_2 = np.mean(abs(np.log(y_pred)-np.log(y_test)))     
+        MAE_1 = np.mean(abs(np.log(y_test) - np.log(y_pred)))
+        MAE_2 = np.mean(abs(np.log(y_pred) - np.log(y_test)))     
         MSE_1 = np.mean((np.log(y_test) - np.log(y_pred))**2)
         MSE_2 = np.mean((np.log(y_pred) - np.log(y_test))**2)
         
@@ -93,7 +93,7 @@ if upload_file is not None:
             # Ghi chú thích
         lightsalmon = mpatches.Patch(color = 'lightsalmon', label = 'y_test/y_train')
         lightgreen = mpatches.Patch(color = 'lightgreen', label = 'y_train/y_test')
-        plt.legend(handles = [lightsalmon ,lightgreen])
+        plt.legend(handles = [lightsalmon, lightgreen])
             # In ra giá trị
         for i in range (0, 4):
             plt.text(x[i], y[i] + 0.001, str(round(y[i], 4)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
