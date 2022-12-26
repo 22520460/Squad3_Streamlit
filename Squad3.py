@@ -9,8 +9,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn import tree, linear_model
 
-st.title('SQUAD 3')
-st.markdown("**:red[Upload and show Dataframe]**")
+st.title('_:red[SQUAD]_ 3 :ship:')
+st.markdown("**_:blue[Upload and show Dataframe]_**")
 upload_file = st.file_uploader("Choose a CSV file")
 if upload_file is not None:
     df = pd.read_csv(upload_file)  
@@ -25,29 +25,29 @@ if upload_file is not None:
     st.dataframe(df)
     
     # Chọn các cột để train
-    st.markdown("**:red[Choose Input Feature]**")
+    st.markdown("**_:blue[Choose Input Feature]_**")
     st.write("What columns do you want to use for training " ,str(df.columns[-1]))
-    choice1 = arr.array('i',[])
+    choice = arr.array('i',[])
     for i in range(0, len(df.columns) - 1):
-        choice1.append(1)
-        choice1[i]= st.checkbox(df.columns[i])
+        choice.append(1)
+        choice[i]= st.checkbox(df.columns[i])
     df1 = df.copy()  # Tạo dataframe khác 
-    dem = 0 # Đếm số cột chọn cho train
+    count = 0 # Đếm số cột chọn cho train
     for i in range(0, len(df.columns) - 1):
-        if (choice1[i] == 0):
+        if (choice[i] == 0):
             del df1[df.columns[i]]
         else:
-            dem +=1
+            count += 1
     
     # Chọn thuật toán
-    if (dem >= 1): 
-        st.markdown("**:red[Choose Algorithm]**")
+    if (count >= 1): 
+        st.markdown("**_:blue[Choose Algorithm]_**")
         algorithm = st.selectbox(
         "Choose one of three algorithms for training :",
         ('Linear Regression', 'Decision Tree', 'XGBoost')
         )
 
-        st.markdown("**:red[Drawing explicity chart]**")
+        st.markdown("**_:blue[Drawing explicity chart]_**")
         # Chọn tỉ lệ train/test
         ratio = st.slider('Choose ratio train/test spilt :', 0.0, 1.0, 0.25)
         train, test = train_test_split(df1, train_size = ratio, random_state = 40)
@@ -84,17 +84,17 @@ if upload_file is not None:
         MSE_2 = np.mean((np.log(y_pred) - np.log(y_test))**2)
         
         #Vẽ đồ thị 
-        x = ['MAE_1','MAE_2','MSE_1','MSE_2']
-        y = [MAE_1,MAE_2,MSE_1,MSE_2]
+        x = ['MAE_1', 'MAE_2', 'MSE_1', 'MSE_2']
+        y = [MAE_1, MAE_2, MSE_1, MSE_2]
 
         fig, ax = plt.subplots()
-        plt.bar(x,y,color=('lightsalmon','lightgreen', 'lightsalmon', 'lightgreen')) # Lấy màu cho các cột
+        plt.bar(x, y, color = ('lightsalmon', 'lightgreen', 'lightsalmon', 'lightgreen')) # Lấy màu cho các cột        
         plt.title(algorithm + "(use logarithm)", fontsize = 14)
             # Ghi chú thích
-        lightsalmon = mpatches.Patch(color='lightsalmon', label='y_test/y_train')
-        lightgreen = mpatches.Patch(color='lightgreen', label='y_train/y_test')
-        plt.legend(handles=[lightsalmon ,lightgreen])
+        lightsalmon = mpatches.Patch(color = 'lightsalmon', label = 'y_test/y_train')
+        lightgreen = mpatches.Patch(color = 'lightgreen', label = 'y_train/y_test')
+        plt.legend(handles = [lightsalmon ,lightgreen])
             # In ra giá trị
-        for i in range (0,4):
-            plt.text(x[i],y[i] + 0.001,str(round(y[i],4)), transform = plt.gca().transData,horizontalalignment = 'center', color = 'black',fontsize = 'medium')
+        for i in range (0, 4):
+            plt.text(x[i], y[i] + 0.001, str(round(y[i], 4)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
         st.pyplot(fig)
