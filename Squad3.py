@@ -54,15 +54,17 @@ if (upload_file is not None):
             st.code(code, 'python')        
         else:
             st.markdown(":four: **_:blue[Drawing explicity chart]_**")
+            
             # Chọn tỉ lệ train/test
             ratio = st.slider('Choose ratio train/test spilt :', 0.0, 1.0, 0.25)
             train, test = train_test_split(df1, train_size = ratio, random_state = 40)
 
             x_train = train.drop(columns = [df1.columns[-1]])
             y_train = train[df1.columns[-1]]
-
+            
             x_test = test.drop(columns = [df1.columns[-1]])
             y_test = test[df1.columns[-1]]
+            
             # Tính toán số liệu
             y_pred = []
             if (algorithm == 'XGBoost') :
@@ -83,7 +85,6 @@ if (upload_file is not None):
             y_test = [(value + 1) for value in y_test]
             y_pred = [(value + 1) for value in y_pred]
 
-
             MAE_1 = np.mean(abs(np.log(y_test) - np.log(y_pred)))
             MAE_2 = np.mean(abs(np.log(y_pred) - np.log(y_test)))     
             MSE_1 = np.mean((np.log(y_test) - np.log(y_pred))**2)
@@ -96,11 +97,13 @@ if (upload_file is not None):
             fig, ax = plt.subplots()
             plt.bar(x, y, color = ('lightsalmon', 'lightgreen', 'lightsalmon', 'lightgreen')) # Lấy màu cho các cột        
             plt.title(algorithm + "(use logarithm)", fontsize = 14)
-                # Ghi chú thích
+            
+            # Ghi chú thích
             lightsalmon = mpatches.Patch(color = 'lightsalmon', label = 'y_test/y_train')
             lightgreen = mpatches.Patch(color = 'lightgreen', label = 'y_train/y_test')
             plt.legend(handles = [lightsalmon, lightgreen])
-                # In ra giá trị
+            
+            # In ra giá trị
             for i in range (0, 4):
                 plt.text(x[i], y[i] + 0.001, str(round(y[i], 4)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
             st.pyplot(fig)
