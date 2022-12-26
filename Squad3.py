@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import tree, linear_model
 
 st.title('_:red[SQUAD]_ 3 :coffee:')
-st.markdown(":one: **_:blue[Upload and show Dataframe]_**")
+st.markdown(":one: **_:blue[Upload and show Dataframe]_** :waxing_crescent_moon:")
 upload_file = st.file_uploader("Choose a CSV file")
 
 if (upload_file is not None):
@@ -27,7 +27,7 @@ if (upload_file is not None):
     
     # Chọn các cột để train
     st.markdown(":two: **_:blue[Choose Input Feature]_**")
-    st.write("What columns do you want to use for training ", str(df.columns[-1]))
+    st.write("What columns do you want to use for training", str(df.columns[-1]), ':first_quarter_moon:')
     choice = arr.array('i', [])
     for i in range(0, len(df.columns) - 1):
         choice.append(1)
@@ -44,11 +44,11 @@ if (upload_file is not None):
     if (count): 
         st.markdown(":three: **_:blue[Choose Algorithm]_**")
         algorithm = st.selectbox(
-            "Choose one of three algorithms for training :",
+            "Choose one of three algorithms for training :waxing_gibbous_moon::",
             ('None', 'Linear Regression', 'Decision Tree', 'XGBoost')
             ) 
         if (algorithm == 'None'):
-            code = '''def buffet():
+            code = '''def buffet() :
             free = 'please choose again'
             print(free)'''
             st.code(code, 'python')        
@@ -56,7 +56,7 @@ if (upload_file is not None):
             st.markdown(":four: **_:blue[Drawing explicity chart]_**")
             
             # Chọn tỉ lệ train/test
-            ratio = st.slider('Choose ratio train/test spilt :', 0.0, 1.0, 0.25)
+            ratio = st.slider('Choose ratio train/test spilt :full_moon::', 0.0, 1.0, 0.25)
             train, test = train_test_split(df1, train_size = ratio, random_state = 40)
 
             x_train = train.drop(columns = [df1.columns[-1]])
@@ -107,4 +107,3 @@ if (upload_file is not None):
             for i in range (0, 4):
                 plt.text(x[i], y[i] + 0.001, str(round(y[i], 4)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
             st.pyplot(fig)
-        
