@@ -7,9 +7,7 @@ import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn import tree, linear_model
-from io import BytesIO
 
 st.title('SQUAD 3')
 st.markdown("**:red[Upload and show Dataframe]**")
@@ -31,13 +29,12 @@ if upload_file is not None:
     st.write("What columns do you want to use for training " ,str(df.columns[-1]))
     choice1 = arr.array('i',[])
     for i in range(0, len(df.columns) - 1):
-        choice1.append(i)
+        choice1.append(1)
         choice1[i]= st.checkbox(df.columns[i])
-        
-    df1 = df # Tạo dataframe khác 
+    df1 = df.copy()  # Tạo dataframe khác 
     dem = 0 # Đếm số cột chọn cho train
-    for i in range(0, len(df.columns) - 2):
-        if (choice1[i] == False):
+    for i in range(0, len(df.columns) - 1):
+        if (choice1[i] == 0):
             del df1[df.columns[i]]
         else:
             dem +=1
@@ -61,51 +58,43 @@ if upload_file is not None:
         x_test = test.drop(columns = [df1.columns[-1]])
         y_test = test[df1.columns[-1]]
         # Tính toán số liệu
-        MAE_1 = 0
-        MAE_2 = 0
-        MSE_1 = 0
-        MSE_2 = 0
+        y_pred = []
         if (algorithm == 'XGBoost') :
             model_xgb = xgb.XGBRegressor(random_state=50,learning_rate = 0.2, n_estimators = 100)
             model_xgb.fit(x_train, y_train)
-            y_pred_XGB = model_xgb.predict(x_test)
-            MAE_1 = mean_absolute_error(y_test, y_pred_XGB)
-            MAE_2 = mean_absolute_error(y_pred_XGB, y_test)
-            MSE_1 = mean_squared_error(y_test, y_pred_XGB, squared=False)
-            MSE_2 = mean_squared_error(y_pred_XGB, y_test, squared=False)
+            y_pred = model_xgb.predict(x_test)
             
         if (algorithm == 'Decision Tree') :
             model_dcs_tree = tree.DecisionTreeRegressor(min_samples_leaf = 4, min_samples_split = 4, random_state=0)
             model_dcs_tree.fit(x_train, y_train)
-            y_pred_dcs_tree = model_dcs_tree.predict(x_test)
-            MAE_1 = mean_absolute_error(y_test, y_pred_dcs_tree)
-            MAE_2 = mean_absolute_error(y_pred_dcs_tree, y_test)
-            MSE_1 = mean_squared_error(y_test, y_pred_dcs_tree, squared=False)
-            MSE_2 = mean_squared_error(y_pred_dcs_tree, y_test, squared=False)
+            y_pred = model_dcs_tree.predict(x_test)
 
         if (algorithm == 'Linear Regression') :
             model_regr = linear_model.LinearRegression()
             model_regr.fit(x_train, y_train)
-            y_pred_regr = model_regr.predict(x_test)
-            MAE_1 = mean_absolute_error(y_test, y_pred_regr)
-            MAE_2 = mean_absolute_error(y_pred_regr, y_test)
-            MSE_1 = mean_squared_error(y_test, y_pred_regr, squared=False)
-            MSE_2 = mean_squared_error(y_pred_regr, y_test, squared=False)
-            
+            y_pred = model_regr.predict(x_test)
+
+        y_test = [(value + 1) for value in y_test]
+        y_pred = [(value + 1) for value in y_pred]
+        
+        
+        MAE_1 = np.mean(abs(np.log(y_test)-np.log(y_pred)))
+        MAE_2 = np.mean(abs(np.log(y_pred)-np.log(y_test)))     
+        MSE_1 = np.mean((np.log(y_test) - np.log(y_pred))**2)
+        MSE_2 = np.mean((np.log(y_pred) - np.log(y_test))**2)
+        
         #Vẽ đồ thị 
         x = ['MAE_1','MAE_2','MSE_1','MSE_2']
         y = [MAE_1,MAE_2,MSE_1,MSE_2]
 
         fig, ax = plt.subplots()
         plt.bar(x,y,color=('lightsalmon','lightgreen', 'lightsalmon', 'lightgreen')) # Lấy màu cho các cột
+        plt.title(algorithm + "(use logarithm)", fontsize = 14)
             # Ghi chú thích
         lightsalmon = mpatches.Patch(color='lightsalmon', label='y_test/y_train')
         lightgreen = mpatches.Patch(color='lightgreen', label='y_train/y_test')
-        plt.legend(handles=[lightsalmon,lightgreen])
+        plt.legend(handles=[lightsalmon ,lightgreen])
             # In ra giá trị
         for i in range (0,4):
-            plt.text(x[i],y[i] + 100,str(round(y[i],2)), transform = plt.gca().transData,horizontalalignment = 'center', color = 'black',fontsize = 'medium')
-            # Ép biểu đồ về dạng ảnh rồi thu nhỏ lại
-        buf = BytesIO()
-        fig.savefig(buf, format="png")
-        st.image(buf, width = 600)
+            plt.text(x[i],y[i] + 0.001,str(round(y[i],4)), transform = plt.gca().transData,horizontalalignment = 'center', color = 'black',fontsize = 'medium')
+        st.pyplot(fig)
