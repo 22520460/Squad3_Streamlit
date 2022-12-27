@@ -102,7 +102,7 @@ if (upload_file is not None):
             lightsalmon = mpatches.Patch(color = 'lightsalmon', label = 'y_test/y_train')
             lightgreen = mpatches.Patch(color = 'lightgreen', label = 'y_train/y_test')
             plt.legend(handles = [lightsalmon, lightgreen])
-            plt.ylabel("log")
+            plt.ylabel("log", fontsize = 10)
             
             # In ra giá trị
             for i in range (0, 4):
