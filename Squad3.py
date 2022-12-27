@@ -9,14 +9,14 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn import tree, linear_model
 
-st.title('_:red[SQUAD]_ 3 :coffee:')
+st.title(':red[SQUAD_3] :coffee:')
 st.markdown(":one: **_:blue[Upload and show Dataframe]_** :waxing_crescent_moon:")
 upload_file = st.file_uploader("Choose a CSV file")
-st.dataframe(df)
 
 if (upload_file is not None):
     df = pd.read_csv(upload_file)  
-
+    st.dataframe(df)
+    
     #Xử lý số liệu
     df.dropna(inplace = True) # Xóa các dòng Nan
     le = LabelEncoder() # Sửa chữ thành số
