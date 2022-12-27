@@ -12,6 +12,7 @@ from sklearn import tree, linear_model
 st.title('_:red[SQUAD]_ 3 :coffee:')
 st.markdown(":one: **_:blue[Upload and show Dataframe]_** :waxing_crescent_moon:")
 upload_file = st.file_uploader("Choose a CSV file")
+st.dataframe(df)
 
 if (upload_file is not None):
     df = pd.read_csv(upload_file)  
@@ -22,8 +23,6 @@ if (upload_file is not None):
     is_Category = df.dtypes == object # Gán các cột có giá trị object thì trả về True
     category_column_list = df.columns[is_Category].tolist() # List các cột có giá trị là object
     df[category_column_list] = df[category_column_list].apply(lambda col: le.fit_transform(col)) # biến object thành số
-
-    st.dataframe(df)
     
     # Chọn các cột để train
     st.markdown(":two: **_:blue[Choose Input Feature]_**")
@@ -102,7 +101,7 @@ if (upload_file is not None):
             lightsalmon = mpatches.Patch(color = 'lightsalmon', label = 'y_test/y_train')
             lightgreen = mpatches.Patch(color = 'lightgreen', label = 'y_train/y_test')
             plt.legend(handles = [lightsalmon, lightgreen])
-            plt.ylabel("log", fontsize = 10)
+            plt.ylabel("log", fontsize = 12)
             
             # In ra giá trị
             for i in range (0, 4):
