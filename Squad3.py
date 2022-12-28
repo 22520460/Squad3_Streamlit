@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn import tree, linear_model
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 st.title(':red[SQUAD_3] :coffee:')
 st.markdown(":one: **_:blue[Upload and show Dataframe]_** :waxing_crescent_moon:")
@@ -83,23 +84,22 @@ if (upload_file is not None):
                     y_pred = model_dcs_tree.predict(x_test)
 
                 if (algorithm == 'Linear Regression') :
-                    model_regr = linear_model.LinearRegression(random_state=50,learning_rate = 0.01)
+                    model_regr = linear_model.LinearRegression(random_state=50,learning_rate = 0.1)
                     model_regr.fit(x_train, y_train)
                     y_pred = model_regr.predict(x_test)
 
-                y_test = [(value + 1) for value in y_test]
-                y_pred = [(value + 1) for value in y_pred]
-
-                MAE_1 = np.mean(abs(np.log(y_test) - np.log(y_pred)))
-                MAE_2 = np.mean(abs(np.log(y_pred) - np.log(y_test)))     
-                MSE_1 = np.mean((np.log(y_test) - np.log(y_pred))**2)
-                MSE_2 = np.mean((np.log(y_pred) - np.log(y_test))**2)
+                MAE_1 = mean_absolute_error(y_test, y_pred)
+                MAE_2 = mean_absolute_error(y_pred, y_test)
+                MSE_1 = mean_squared_error(y_test, y_pred, squared=False)
+                MSE_2 = mean_squared_error(y_pred, y_test, squared=False)
 
                 #Vẽ đồ thị 
                 x = ['MAE_1', 'MAE_2', 'MSE_1', 'MSE_2']
                 y = [MAE_1, MAE_2, MSE_1, MSE_2]
 
                 fig, ax = plt.subplots()
+                ax = plt.gca()
+                ax.set_ylim(-100, 30000)
                 plt.bar(x, y, color = ('lightsalmon', 'lightgreen', 'lightsalmon', 'lightgreen')) # Lấy màu cho các cột        
                 plt.title(algorithm + "(use logarithm)", fontsize = 14)
                 
