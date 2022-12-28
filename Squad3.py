@@ -56,54 +56,60 @@ if (upload_file is not None):
             
             # Chọn tỉ lệ train/test
             ratio = st.slider('Choose ratio train/test spilt :full_moon::', 0.0, 1.0, 0.25)
-            train, test = train_test_split(df1, train_size = ratio, random_state = 40)
+            if (ratio == 1 or ratio == 0):
+                code = '''def buffet() :
+                free = 'please choose again'
+                print(free)'''
+                st.code(code, 'python')  
+            else:
+                train, test = train_test_split(df1, train_size = ratio, random_state = 40)
 
-            x_train = train.drop(columns = [df1.columns[-1]])
-            y_train = train[df1.columns[-1]]
-            
-            x_test = test.drop(columns = [df1.columns[-1]])
-            y_test = test[df1.columns[-1]]
-            
-            # Tính toán số liệu
-            y_pred = []
-            if (algorithm == 'XGBoost') :
-                model_xgb = xgb.XGBRegressor(random_state=50,learning_rate = 0.2, n_estimators = 100)
-                model_xgb.fit(x_train, y_train)
-                y_pred = model_xgb.predict(x_test)
+                x_train = train.drop(columns = [df1.columns[-1]])
+                y_train = train[df1.columns[-1]]
+                
+                x_test = test.drop(columns = [df1.columns[-1]])
+                y_test = test[df1.columns[-1]]
+                
+                # Tính toán số liệu
+                y_pred = []
+                if (algorithm == 'XGBoost') :
+                    model_xgb = xgb.XGBRegressor(random_state=50,learning_rate = 0.2, n_estimators = 100)
+                    model_xgb.fit(x_train, y_train)
+                    y_pred = model_xgb.predict(x_test)
 
-            if (algorithm == 'Decision Tree') :
-                model_dcs_tree = tree.DecisionTreeRegressor(min_samples_leaf = 4, min_samples_split = 4, random_state=0)
-                model_dcs_tree.fit(x_train, y_train)
-                y_pred = model_dcs_tree.predict(x_test)
+                if (algorithm == 'Decision Tree') :
+                    model_dcs_tree = tree.DecisionTreeRegressor(min_samples_leaf = 4, min_samples_split = 4, random_state=0)
+                    model_dcs_tree.fit(x_train, y_train)
+                    y_pred = model_dcs_tree.predict(x_test)
 
-            if (algorithm == 'Linear Regression') :
-                model_regr = linear_model.LinearRegression()
-                model_regr.fit(x_train, y_train)
-                y_pred = model_regr.predict(x_test)
+                if (algorithm == 'Linear Regression') :
+                    model_regr = linear_model.LinearRegression()
+                    model_regr.fit(x_train, y_train)
+                    y_pred = model_regr.predict(x_test)
 
-            y_test = [(value + 1) for value in y_test]
-            y_pred = [(value + 1) for value in y_pred]
+                y_test = [(value + 1) for value in y_test]
+                y_pred = [(value + 1) for value in y_pred]
 
-            MAE_1 = np.mean(abs(np.log(y_test) - np.log(y_pred)))
-            MAE_2 = np.mean(abs(np.log(y_pred) - np.log(y_test)))     
-            MSE_1 = np.mean((np.log(y_test) - np.log(y_pred))**2)
-            MSE_2 = np.mean((np.log(y_pred) - np.log(y_test))**2)
+                MAE_1 = np.mean(abs(np.log(y_test) - np.log(y_pred)))
+                MAE_2 = np.mean(abs(np.log(y_pred) - np.log(y_test)))     
+                MSE_1 = np.mean((np.log(y_test) - np.log(y_pred))**2)
+                MSE_2 = np.mean((np.log(y_pred) - np.log(y_test))**2)
 
-            #Vẽ đồ thị 
-            x = ['MAE_1', 'MAE_2', 'MSE_1', 'MSE_2']
-            y = [MAE_1, MAE_2, MSE_1, MSE_2]
+                #Vẽ đồ thị 
+                x = ['MAE_1', 'MAE_2', 'MSE_1', 'MSE_2']
+                y = [MAE_1, MAE_2, MSE_1, MSE_2]
 
-            fig, ax = plt.subplots()
-            plt.bar(x, y, color = ('lightsalmon', 'lightgreen', 'lightsalmon', 'lightgreen')) # Lấy màu cho các cột        
-            plt.title(algorithm + "(use logarithm)", fontsize = 14)
-            
-            # Ghi chú thích
-            lightsalmon = mpatches.Patch(color = 'lightsalmon', label = 'y_test/y_train')
-            lightgreen = mpatches.Patch(color = 'lightgreen', label = 'y_train/y_test')
-            plt.legend(handles = [lightsalmon, lightgreen])
-            plt.ylabel("log", fontsize = 12)
-            
-            # In ra giá trị
-            for i in range (0, 4):
-                plt.text(x[i], y[i] + 0.001, str(round(y[i], 4)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
-            st.pyplot(fig)
+                fig, ax = plt.subplots()
+                plt.bar(x, y, color = ('lightsalmon', 'lightgreen', 'lightsalmon', 'lightgreen')) # Lấy màu cho các cột        
+                plt.title(algorithm + "(use logarithm)", fontsize = 14)
+                
+                # Ghi chú thích
+                lightsalmon = mpatches.Patch(color = 'lightsalmon', label = 'y_test/y_train')
+                lightgreen = mpatches.Patch(color = 'lightgreen', label = 'y_train/y_test')
+                plt.legend(handles = [lightsalmon, lightgreen])
+                plt.ylabel("log", fontsize = 12)
+                
+                # In ra giá trị
+                for i in range (0, 4):
+                    plt.text(x[i], y[i] + 0.001, str(round(y[i], 4)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
+                st.pyplot(fig)
