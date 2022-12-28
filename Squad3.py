@@ -83,7 +83,7 @@ if (upload_file is not None):
                     y_pred = model_dcs_tree.predict(x_test)
 
                 if (algorithm == 'Linear Regression') :
-                    model_regr = linear_model.LinearRegression()
+                    model_regr = linear_model.LinearRegression(random_state=50,learning_rate = 0.01)
                     model_regr.fit(x_train, y_train)
                     y_pred = model_regr.predict(x_test)
 
