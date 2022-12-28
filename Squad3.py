@@ -28,20 +28,17 @@ if (upload_file is not None):
     # Chọn các cột để train
     st.markdown(":two: **_:blue[Choose Input Feature]_**")
     st.write("What columns do you want to use for training", str(df.columns[-1]), ':first_quarter_moon:')
-    choice = arr.array('i', [])
-    for i in range(0, len(df.columns) - 1):
-        choice.append(1)
-        choice[i] = st.checkbox(df.columns[i])
-    df1 = df.copy()  # Tạo dataframe khác 
-    count = False
-    for i in range(0, len(df.columns) - 1):
-        if (choice[i] == 0):
-            del df1[df.columns[i]]
-        else:
-            count = True
+    choice = []
+    run = False
+    for i in range(0, len(df.columns) - 1):        
+        if (st.checkbox(df.columns[i]) == True):
+            choice.append(i)
+            run = True
+    
+    df1 = df.columns[choice]
     
     # Chọn thuật toán
-    if (count): 
+    if (run): 
         st.markdown(":three: **_:blue[Choose Algorithm]_**")
         algorithm = st.selectbox(
             "Choose one of three algorithms for training :waxing_gibbous_moon::",
@@ -66,17 +63,17 @@ if (upload_file is not None):
             # Tính toán số liệu
             y_pred = []
             if (algorithm == 'XGBoost') :
-                model_xgb = xgb.XGBRegressor()
+                model_xgb = xgb.XGBRegressor(random_state=50,learning_rate = 0.2, n_estimators = 100)
                 model_xgb.fit(x_train, y_train)
                 y_pred = model_xgb.predict(x_test)
 
             if (algorithm == 'Decision Tree') :
-                model_dcs_tree = tree.DecisionTreeRegressor()
+                model_dcs_tree = tree.DecisionTreeRegressor(min_samples_leaf = 4, min_samples_split = 4, random_state=0)
                 model_dcs_tree.fit(x_train, y_train)
                 y_pred = model_dcs_tree.predict(x_test)
 
             if (algorithm == 'Linear Regression') :
-                model_regr = linear_model.LinearRegression()
+                model_regr = linear_model.LinearRegression(random_state=50,learning_rate = 0.2, n_estimators = 100)
                 model_regr.fit(x_train, y_train)
                 y_pred = model_regr.predict(x_test)
 
@@ -90,7 +87,9 @@ if (upload_file is not None):
             MSE = [MSE_1,MSE_2]
             a = np.arange(len(MAE))
             width = 0.4
-            fig = plt.figure()
+            fig, ax = plt.subplot()
+            ax.set_ylim(0, 1)
+            
             plt.bar(a - 0.2, MAE,width, color='lightsalmon', label='MAE')
             plt.bar(a + 0.2, MSE,width, color='lightgreen', label='MSE')
             plt.xticks([r for r in range(len(MAE))], ['Train', 'Test'])
