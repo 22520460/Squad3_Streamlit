@@ -55,7 +55,7 @@ if (upload_file is not None):
             st.markdown(":four: **_:blue[Drawing explicity chart]_**")
             
             # Chọn tỉ lệ train/test
-            ratio = st.slider('Choose ratio train/test spilt :full_moon::', 0.0, 1.0, 0.25)
+            ratio = st.slider('Choose ratio train spilt :full_moon::', 0.0, 1.0, 0.25)
             if (ratio == 1 or ratio == 0):
                 code = '''def buffet() :
                 free = 'please choose again'
