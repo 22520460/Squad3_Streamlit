@@ -33,9 +33,9 @@ if (upload_file is not None):
     for i in range(0, len(df.columns) - 1):        
         if (st.checkbox(df.columns[i]) == True):
             choice.append(i)
-            run = True
-    
-    df1 = df.columns[choice]
+            run = True   
+    df = df.iloc[:, choice]
+    st.dataframe(df)
     
     # Chọn thuật toán
     if (run): 
@@ -52,13 +52,13 @@ if (upload_file is not None):
         if (ratio == 1 or ratio == 0):
             st.markdown("**Choose another value please**")
         else:
-            train, test = train_test_split(df1, train_size = ratio, random_state = 40)
+            train, test = train_test_split(df, train_size = ratio)
 
-            x_train = train.drop(columns = [df1.columns[-1]])
-            y_train = train[df1.columns[-1]]
+            x_train = train.drop(columns = [df.columns[-1]])
+            y_train = train[df.columns[-1]]
             
-            x_test = test.drop(columns = [df1.columns[-1]])
-            y_test = test[df1.columns[-1]]
+            x_test = test.drop(columns = [df.columns[-1]])
+            y_test = test[df.columns[-1]]
             
             # Tính toán số liệu
             y_pred = []
@@ -73,7 +73,7 @@ if (upload_file is not None):
                 y_pred = model_dcs_tree.predict(x_test)
 
             if (algorithm == 'Linear Regression') :
-                model_regr = linear_model.LinearRegression(random_state=50,learning_rate = 0.2, n_estimators = 100)
+                model_regr = linear_model.LinearRegression()
                 model_regr.fit(x_train, y_train)
                 y_pred = model_regr.predict(x_test)
 
@@ -86,12 +86,12 @@ if (upload_file is not None):
             MAE = [MAE_1,MAE_2]
             MSE = [MSE_1,MSE_2]
             a = np.arange(len(MAE))
-            width = 0.4
-            fig, ax = plt.subplot()
-            ax.set_ylim(0, 1)
+            width = 0.5
+            fig, ax = plt.subplots()
+            ax.set_ylim(1, 50)
             
             plt.bar(a - 0.2, MAE,width, color='lightsalmon', label='MAE')
-            plt.bar(a + 0.2, MSE,width, color='lightgreen', label='MSE')
+            plt.bar(a + 0.2 , MSE,width, color='lightgreen', label='MSE')
             plt.xticks([r for r in range(len(MAE))], ['Train', 'Test'])
 
 
@@ -102,8 +102,8 @@ if (upload_file is not None):
             plt.legend()
             
             # In ra giá trị
-            plt.text(1 - 0.2, MAE[1] + 1000, str(round(MAE[1], 2)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
-            plt.text(0 - 0.2, MAE[0] + 1000, str(round(MAE[0], 2)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
-            plt.text(1 + 0.2, MSE[1] + 10000000, str(round(MSE[1], 2)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
-            plt.text(0 + 0.2, MSE[0] + 10000000, str(round(MSE[0], 2)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
+            plt.text(1 - 0.2, MAE[1] + 1, str(round(MAE[1], 2)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
+            plt.text(0 - 0.2, MAE[0] + 1, str(round(MAE[0], 2)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
+            plt.text(1 + 0.2, MSE[1] + 10, str(round(MSE[1], 2)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
+            plt.text(0 + 0.2, MSE[0] + 10, str(round(MSE[0], 2)), transform = plt.gca().transData, horizontalalignment = 'center', color = 'black', fontsize = 'medium')
             st.pyplot(fig)
